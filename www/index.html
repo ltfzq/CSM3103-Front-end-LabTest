@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>Bootstrap Example</title>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="stylesheet" href="css/bootstrap.min.css" />
+    <!-- Custom styles for this template -->
+    <link href="css/navbar-fixed-top.css" rel="stylesheet" />
+    <style>
+      @font-face {
+        font-family: "Glyphicons Halflings";
+        src: url("fonts/glyphicons-halflings-regular.woff") format("woff");
+        /* Add more src lines for other formats like .woff2 if needed */
+        font-weight: normal;
+        font-style: normal;
+      }
+      body {
+        display: flex;
+        flex-direction: column;
+        min-height: 100vh;
+        background: linear-gradient(135deg, #6e8efb, #a777e3);
+      }
+      .container {
+        flex: 1;
+        padding-bottom: 0px; /* Ensures content doesn't get hidden behind the footer */
+      }
+
+      .container1 {
+        flex: 1;
+        padding-bottom: 90px; /* Ensures content doesn't get hidden behind the footer */
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Fixed navbar -->
+    <nav class="navbar navbar-default navbar-fixed-top">
+      <div class="container">
+        <div class="navbar-header">
+          <button
+            type="button"
+            class="navbar-toggle collapsed"
+            data-toggle="collapse"
+            data-target="#navbar"
+            aria-expanded="false"
+            aria-controls="navbar"
+          >
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="navbar-brand" href="index.html">CSM3103</a>
+        </div>
+        <div id="navbar" class="navbar-collapse collapse">
+          <ul class="nav navbar-nav">
+            <li class="active"><a href="index.html">Home</a></li>
+            <li class="dropdown">
+              <a
+                href="#"
+                class="dropdown-toggle"
+                data-toggle="dropdown"
+                role="button"
+                aria-haspopup="true"
+                aria-expanded="false"
+                >Dropdown <span class="caret"></span
+              ></a>
+              <ul class="dropdown-menu">
+                <li><a href="#">Profile</a></li>
+                <li><a href="#">Logout</a></li>
+              </ul>
+            </li>
+          </ul>
+        </div>
+        <!--/.nav-collapse -->
+      </div>
+    </nav>
+
+    <!-- Main content -->
+    <div class="container1" style="margin-top: 20px">
+      <h1>Staff List</h1>
+      <ul id="staffEmails" class="list-group"></ul>
+    </div>
+
+    <!-- Footer -->
+    <nav class="navbar navbar-default navbar-fixed-bottom">
+      <div class="container">
+        <div class="row">
+          <div class="col-md-12">
+            © 2024 Lutfil Haziq. All rights reserved. | Designed by Lutfil Haziq
+          </div>
+        </div>
+      </div>
+    </nav>
+
+    <!-- Include jQuery -->
+    <script src="js/jquery-3.2.1.min.js"></script>
+    <!-- Include Bootstrap JS -->
+    <script src="js/bootstrap.min.js"></script>
+    <script>
+      $(document).ready(function () {
+        $.ajax({
+          url: "https://kerbau.odaje.biz/getstaff.php",
+          method: "GET",
+          success: function (response) {
+            const staffList = JSON.parse(response);
+            let emailList = "";
+
+            staffList.forEach((item) => {
+              const staff = JSON.parse(item);
+              if (staff.status !== 1) {
+                const email = staff.email;
+                const employeeNumber = staff.employeeNumber;
+                emailList += `<li class="list-group-item"><a href="#" id="${employeeNumber}" onclick="redirectToDetails(${employeeNumber})">${email}</a></li>`;
+              }
+            });
+
+            $("#staffEmails").html(emailList);
+          },
+          error: function () {
+            alert("Failed to fetch staff data.");
+          },
+        });
+      });
+
+      function redirectToDetails(employeeNumber) {
+        window.location.href = `secondpage.html?id=${employeeNumber}`;
+      }
+    </script>
+  </body>
+</html>

@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Staff Details</title>
+
+    <!-- Include Bootstrap CSS -->
+    <link rel="stylesheet" href="css/bootstrap.min.css" />
+
+    <!-- Custom styles for this template -->
+    <link href="css/navbar-fixed-top.css" rel="stylesheet" />
+    <style>
+      body {
+        display: flex;
+        flex-direction: column;
+        min-height: 100vh;
+        background: linear-gradient(135deg, #6e8efb, #a777e3);
+      }
+      .container {
+        flex: 1;
+        padding-bottom: 0px; /* Ensures content doesn't get hidden behind the footer */
+      }
+
+      .container1 {
+        flex: 1;
+        padding-bottom: 90px; /* Ensures content doesn't get hidden behind the footer */
+        padding-left: 50px;
+      }
+    </style>
+
+    <!-- Include jQuery -->
+    <script src="js/jquery-3.2.1.min.js"></script>
+  </head>
+  <body>
+    <!-- Fixed navbar -->
+    <nav class="navbar navbar-default navbar-fixed-top">
+      <div class="container">
+        <div class="navbar-header">
+          <button
+            type="button"
+            class="navbar-toggle collapsed"
+            data-toggle="collapse"
+            data-target="#navbar"
+            aria-expanded="false"
+            aria-controls="navbar"
+          >
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="navbar-brand" href="index.html">CSM3103</a>
+        </div>
+        <div id="navbar" class="navbar-collapse collapse">
+          <ul class="nav navbar-nav">
+            <li class="active"><a href="index.html">Home</a></li>
+            <li class="dropdown">
+              <a
+                href="#"
+                class="dropdown-toggle"
+                data-toggle="dropdown"
+                role="button"
+                aria-haspopup="true"
+                aria-expanded="false"
+                >Dropdown <span class="caret"></span
+              ></a>
+              <ul class="dropdown-menu">
+                <li><a href="#">Profile</a></li>
+                <li><a href="#">Logout</a></li>
+              </ul>
+            </li>
+          </ul>
+        </div>
+        <!--/.nav-collapse -->
+      </div>
+    </nav>
+
+    <div class="container1" style="margin-top: 60px">
+      <h1>Staff Details Page</h1>
+      <div id="staffDetails"></div>
+    </div>
+
+    <!-- Footer -->
+    <nav class="navbar navbar-default navbar-fixed-bottom">
+      <div class="container">
+        <div class="row">
+          <div class="col-md-12">
+            © 2024 Lutfil Haziq. All rights reserved. | Designed by Lutfil Haziq
+          </div>
+        </div>
+      </div>
+    </nav>
+
+    <!-- Include Bootstrap JS and its dependencies -->
+    <script src="js/bootstrap.min.js"></script>
+    <script>
+      $(document).ready(function () {
+        // Function to get query parameters from the URL
+        function getQueryParams() {
+          const params = new URLSearchParams(window.location.search);
+          return {
+            employeeNumber: params.get("id"),
+          };
+        }
+
+        const { employeeNumber } = getQueryParams();
+
+        // If no employeeNumber is found in the URL, show an error
+        if (!employeeNumber) {
+          $("#staffDetails").html(
+            "<p class='text-danger'>Error: No employee ID provided.</p>"
+          );
+          return;
+        }
+
+        // AJAX call to get staff details by employee number
+        $.ajax({
+          url: `https://kerbau.odaje.biz/getstaffbyid.php?id=${employeeNumber}`,
+          method: "GET",
+          success: function (response) {
+            const staffData = JSON.parse(response);
+            const staffDetails = JSON.parse(staffData[1]);
+
+            if (staffData[0].status === 0) {
+              $("#staffDetails").html(
+                "<p class='text-danger'>Error: No staff details found for the provided ID.</p>"
+              );
+              return;
+            }
+
+            // Construct HTML to display staff details
+            const detailsHtml = `
+                        <h2>Staff Details</h2>
+                        <p><strong>Employee Number:</strong> ${
+                          staffDetails.employeeNumber
+                        }</p>
+                        <p><strong>First Name:</strong> ${
+                          staffDetails.firstName
+                        }</p>
+                        <p><strong>Last Name:</strong> ${
+                          staffDetails.lastName
+                        }</p>
+                        <p><strong>Office Code:</strong> ${
+                          staffDetails.officeCode
+                        }</p>
+                        <p><strong>Phone Extension:</strong> ${
+                          staffDetails.extension
+                        }</p>
+                        <p><strong>Email:</strong> ${staffDetails.email}</p>
+                        
+                        
+                        <p><strong>Job Title:</strong> ${
+                          staffDetails.jobTitle
+                        }</p>
+                        <p><strong>Reports To:</strong> ${
+                          staffDetails.reportsTo || "N/A"
+                        }</p>
+                    `;
+
+            $("#staffDetails").html(detailsHtml);
+          },
+          error: function () {
+            $("#staffDetails").html(
+              "<p class='text-danger'>Error: Failed to fetch staff details.</p>"
+            );
+          },
+        });
+      });
+    </script>
+  </body>
+</html>
